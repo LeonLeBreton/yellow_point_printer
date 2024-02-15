@@ -5,6 +5,6 @@ ceci c'est une version modifié du script ne fonctionne plus sur le site https:/
 
 il fonctionne :
 	
- 	- sous python
+ 	- sous python3
 	- du bas vers le haut
  	- de gauche vers la droite 
