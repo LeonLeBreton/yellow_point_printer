@@ -1,3 +1,6 @@
+import tkinter as tk
+
+
 def print_matrix(dots):
     # Print the matrix of dots on standard output.
     print("           111111")
@@ -11,6 +14,12 @@ def print_matrix(dots):
                 line += " "
         print(y, line)
 
+dots = {}
+for row in range(8):
+    for col in range(1,16):
+        dots[(col, row)] = 0
+
+
 def column_value(col, dots):
     # Extract and decode the value of the indicated column.
     total = 0
@@ -18,34 +27,17 @@ def column_value(col, dots):
         total += dots[(col, y)] * 2**y
     return total
 
-def main():
-    dots = {}
-    print("Please enter the dot pattern (0 for empty, 1 for filled):")
-    
-    for x in range(1, 16):
-        for y in range(0, 8):
-            while True:
-                try:
-                    value = input(f"Dot at position ({x}, {y}): ").strip()
-                    if value == "":
-                        raise ValueError("You must enter a value.")
-                    dots[(x, y)] = int(value)
-                    break
-                except ValueError as e:
-                    print(e)
-    
-    print("\nThis is the interpretation of the dot pattern:")
-    print_matrix(dots)
-
+def show(dots):
+    text = ""
     if not 1 in dots.values():
-        print("\nThis pattern is empty and cannot be interpreted.")
-        return
+        text+="This pattern is empty and cannot be interpreted."
+        return text
 
-    print("\nIgnoring parity errors for odd rows and columns.")
+    text+="Ignoring parity errors for odd rows and columns."
 
     # Decode serial number
     serial_number = tuple(map(lambda col: column_value(col, dots), (13, 12, 11))) + tuple(map(lambda col: column_value(col, dots), (14, 13, 12, 11)))
-    print("\nPrinter serial number:", "%02i%02i%02i [or %02i%02i%02i%02i]" % serial_number)
+    text += "\n\nPrinter serial number: %02i%02i%02i [or %02i%02i%02i%02i]" % serial_number
 
     # Decode date and time
     year = column_value(8, dots)
@@ -66,13 +58,58 @@ def main():
     elif day > 31:
         day = "(invalid day %i)" % day
 
-    print("\nEvent date and time:")
-    print("hh   :", column_value(5, dots))
-    print("mm   :", column_value(2, dots))
-    print("dd   :", day)
-    print("MM   :", month)
-    print("yyyy :", year)
-    print("SSSSSSSS : Serial number", column_value(15, dots))
+    text += "\n\nEvent date and time:"
+    text += f"\nhh   : {column_value(5, dots)}"
+    text += f"\nmm    : {column_value(2, dots)}"
+    text += f"\ndd   : {day}"
+    text += f"\nMM   : {month}"
+    text += f"\nyyyy : {year}"
+    text += f"\nSSSSSSSS : Serial number {column_value(15, dots)}"
+    return text
 
-if __name__ == "__main__":
-    main()
+
+def submit():
+    # Fonction à appeler lorsque le bouton "Submit" est pressé
+    # Réinitialiser la liste et effacer les sélections
+    # Afficher le texte saisi dans l'espace à droite*
+    print_matrix(dots)
+    result_text = show(dots)
+    text_area.delete(1.0, tk.END)  # Efface le texte précédent dans le widget de texte
+    text_area.insert(tk.END, result_text)  # Insère le nouveau texte généré
+
+
+def create_button(parent, row, col):
+    def toggle_state(row, col):
+        # Fonction pour changer l'état du bouton (jaune ou blanc)
+        if circle_button["bg"] == "yellow":
+            circle_button["bg"] = "white"
+            dots[(col+1, 7-row)] = 0
+        else:
+            circle_button["bg"] = "yellow"
+            dots[(col+1, 7-row)] = 1
+        print(dots)
+
+
+    # Créer un bouton rond jaune à la position (row, col)
+    circle_button = tk.Button(parent, text="", bg="white", command=lambda:toggle_state(row, col))
+    circle_button.grid(row=row, column=col)
+
+# Créer la fenêtre principale
+root = tk.Tk()
+root.title("Points jaune imprimante")
+
+# Créer les boutons ronds jaunes
+for row in range(8):
+    for col in range(15):
+        create_button(root, row, col)
+
+# Créer l'espace de texte à droite
+text_area = tk.Text(root, height=17, width=30)
+text_area.grid(row=0, column=16, rowspan=9)  # Augmenter rowspan à 8 pour occuper toute la hauteur de la fenêtre
+
+
+# Créer le bouton "Submit"
+submit_button = tk.Button(root, text="Submit", command=submit)
+submit_button.grid(row=8, column=0, columnspan=15)
+
+root.mainloop()
