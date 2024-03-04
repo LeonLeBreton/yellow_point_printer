@@ -8,7 +8,7 @@ il fonctionne :
  	- sous python3
 	- du bas vers le haut
  	- de gauche vers la droite 
-![image](https://github.com/CezarioSs/yellow_point_printer/assets/77542327/44232102-ba52-4f76-9d61-2c024bbce9a3)
+![Capture d’écran du 2024-03-04 15-21-30](https://github.com/LeonLeBreton/yellow_point_printer/assets/34661979/42f64640-3b8c-40f8-bab9-6d2f99eeee2d)
 
 comparaison au site : 
  
