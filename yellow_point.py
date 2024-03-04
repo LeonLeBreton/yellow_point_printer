@@ -1,19 +1,5 @@
 import tkinter as tk
 
-
-def print_matrix(dots):
-    # Print the matrix of dots on standard output.
-    print("           111111")
-    print("  123456789012345")
-    for y in range(7, -1, -1):
-        line = ""
-        for x in range(1, 16):
-            if dots[(x,y)]:
-                line += "o"
-            else:
-                line += " "
-        print(y, line)
-
 dots = {}
 for row in range(8):
     for col in range(1,16):
@@ -21,7 +7,6 @@ for row in range(8):
 
 
 def column_value(col, dots):
-    # Extract and decode the value of the indicated column.
     total = 0
     for y in range(6, -1, -1):
         total += dots[(col, y)] * 2**y
@@ -69,18 +54,13 @@ def show(dots):
 
 
 def submit():
-    # Fonction à appeler lorsque le bouton "Submit" est pressé
-    # Réinitialiser la liste et effacer les sélections
-    # Afficher le texte saisi dans l'espace à droite*
-    print_matrix(dots)
     result_text = show(dots)
-    text_area.delete(1.0, tk.END)  # Efface le texte précédent dans le widget de texte
-    text_area.insert(tk.END, result_text)  # Insère le nouveau texte généré
+    text_area.delete(1.0, tk.END)
+    text_area.insert(tk.END, result_text)
 
 
 def create_button(parent, row, col):
     def toggle_state(row, col):
-        # Fonction pour changer l'état du bouton (jaune ou blanc)
         if circle_button["bg"] == "yellow":
             circle_button["bg"] = "white"
             dots[(col+1, 7-row)] = 0
@@ -90,25 +70,19 @@ def create_button(parent, row, col):
         print(dots)
 
 
-    # Créer un bouton rond jaune à la position (row, col)
     circle_button = tk.Button(parent, text="", bg="white", command=lambda:toggle_state(row, col))
     circle_button.grid(row=row, column=col)
 
-# Créer la fenêtre principale
 root = tk.Tk()
-root.title("Points jaune imprimante")
+root.title("Yellow point printer")
 
-# Créer les boutons ronds jaunes
 for row in range(8):
     for col in range(15):
         create_button(root, row, col)
 
-# Créer l'espace de texte à droite
 text_area = tk.Text(root, height=17, width=30)
-text_area.grid(row=0, column=16, rowspan=9)  # Augmenter rowspan à 8 pour occuper toute la hauteur de la fenêtre
+text_area.grid(row=0, column=16, rowspan=9)
 
-
-# Créer le bouton "Submit"
 submit_button = tk.Button(root, text="Submit", command=submit)
 submit_button.grid(row=8, column=0, columnspan=15)
 
